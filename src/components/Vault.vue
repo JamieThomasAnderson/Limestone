@@ -1,26 +1,35 @@
 <template>
   <div class="p-4">
-    <button class="font-semibold hover:bg-slate-300" @click="selectDirectory">{{ directoryName || 'Select Vault' }}</button>
-    <DirectoryTree v-if="directoryStructure.length" :items="directoryStructure" @click="handleLoad" />
+    <button class="font-semibold" @click="selectDirectory">
+      {{ directoryName || "Select Vault" }}
+    </button>
+    <DirectoryTree
+      v-if="directoryStructure.length"
+      :items="directoryStructure"
+      @click="handleLoad"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import DirectoryTree from './DirectoryTree.vue';
+import { ref, onMounted } from "vue";
+import { store } from "@/store";
+
+import DirectoryTree from "./DirectoryTree.vue";
+
 
 const directoryStructure = ref([]);
-const directoryName = ref('');
-const emit = defineEmits(['load']);
+const directoryName = ref("");
+const emit = defineEmits(["load"]);
 
 const selectDirectory = async () => {
   try {
     const directoryHandle = await window.showDirectoryPicker();
-    directoryName.value = directoryHandle.name; // Update the directory name
+    directoryName.value = directoryHandle.name;
     directoryStructure.value = [];
     await buildDirectoryTree(directoryHandle, directoryStructure.value);
   } catch (error) {
-    console.error('Error accessing directory:', error);
+    console.error("Error accessing directory:", error);
   }
 };
 
@@ -31,9 +40,9 @@ const buildDirectoryTree = async (directoryHandle, parentArray) => {
       kind: entry.kind,
       isOpen: false,
       children: [],
-      handle: entry.kind === 'file' ? entry : null,
+      handle: entry.kind === "file" ? entry : null,
     };
-    if (entry.kind === 'directory') {
+    if (entry.kind === "directory") {
       await buildDirectoryTree(entry, item.children);
     }
     parentArray.push(item);
@@ -41,6 +50,8 @@ const buildDirectoryTree = async (directoryHandle, parentArray) => {
 };
 
 const handleLoad = (file) => {
-  emit('load', file);
+  store.appendOpenFile(file);
+  emit("load", file);
 };
+
 </script>

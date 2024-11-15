@@ -1,40 +1,40 @@
 <!-- Editor.vue File -->
 <template>
-  <MdEditor class="editor" :toolbars="[]" v-model="content" language="en-US" @on-save="saveFile" />
+  <MdEditor
+    class="editor"
+    :toolbars="[]"
+    v-model="content"
+    language="en-US"
+    @on-save="saveFile"
+  />
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { MdEditor, config } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import { ref, watch } from "vue";
+import { MdEditor, config } from "md-editor-v3";
+import { lineNumbers } from "@codemirror/view";
+import "md-editor-v3/lib/style.css";
 
 config({
   editorConfig: {
-    renderDelay: 0
-  }
+    renderDelay: 0,
+  },
+  codeMirrorExtensions(_theme, extensions) {
+    return [...extensions, lineNumbers()];
+  },
 });
 
 const props = defineProps({
-  content: {
-    type: String,
-    required: true
-  },
   file: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
-const content = ref(props.content);
+const content = ref('');
 const currFile = ref(props.file);
-const emit = defineEmits(['contentChanged']);
+const emit = defineEmits(["contentChanged"]);
 
-watch(
-  () => props.content,
-  (newContent) => {
-    content.value = newContent;
-  }
-);
 
 watch(
   () => props.file,
@@ -45,25 +45,31 @@ watch(
 );
 
 const loadFile = async (file) => {
-  if (file.kind === 'file' && file.handle) {
+  if (file.kind === "file" && file.handle) {
     try {
       const fileData = await file.handle.getFile();
       const fileContent = await fileData.text();
       content.value = fileContent;
     } catch (error) {
-      console.error('Error reading file:', error);
+      console.error("Error reading file:", error);
     }
   } else {
-    console.log('Selected item is not a file');
+    console.log("Selected item is not a file");
   }
 };
 
 const saveFile = async () => {
+  if (!currFile.value.handle) {
+    await saveNewFile();
+    console.log("New file saved successfully");
+    return;
+  }
+
   const fileData = await currFile.value.handle.getFile();
   const fileContent = await fileData.text();
-  
+
   if (content.value === fileContent) {
-    console.log('No changes detected');
+    console.log("No changes detected");
     return;
   }
 
@@ -71,12 +77,37 @@ const saveFile = async () => {
   await writable.write(content.value);
   await writable.close();
 
-  console.log('File saved successfully');
+  console.log("File saved successfully");
+};
+
+const saveNewFile = async () => {
+  try {
+    const options = {
+      types: [
+        {
+          description: "Markdown Files",
+          accept: {
+            "text/markdown": [".md"],
+          },
+        },
+      ],
+    };
+    const handle = await window.showSaveFilePicker(options);
+    const writable = await handle.createWritable();
+    await writable.write(content.value);
+    await writable.close();
+
+    console.log("New file saved successfully");
+    currFile.value = { handle }; // Update the current file reference with the new handle
+  } catch (error) {
+    console.error("Error saving new file:", error);
+  }
 };
 </script>
 
 <style scoped>
 .editor {
-  height: 100vh;
+  height: 93vh;
+  border: none;
 }
 </style>

@@ -1,23 +1,28 @@
-<template>
+<template>  
   <div class="flex h-screen">
-    <aside class="w-64 h-full overflow-y-auto bg-gray-200">
-      <Vault @load="updateFile" />
-    </aside>
+    <div class="flex flex-col w-64 h-full">
+      <aside class="h-3/4 overflow-y-auto bg-gray-100">
+        <Vault @load="updateFile" />
+      </aside>
+      <aside class="h-1/4 overflow-y-auto bg-gray-100 border-t">
+        <Recent />
+      </aside>
+    </div>
     <main class="flex-1 h-full overflow-hidden">
-      <Editor :content="fileContent" :file="file" />
+      <input class="text-xl p-4 w-full focus:outline-none w-1/2 font-semibold" :value="file.name || 'Untitled'"> </input>
+      <Editor :file="file" />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import Editor from './Editor.vue';
-import Vault from './Vault.vue';
-
 import { ref } from 'vue';
 
+import Editor from './Editor.vue';
+import Vault from './Vault.vue';
+import Recent from './Recent.vue';
 
-const fileContent = ref('# Hello, World!');
-const file = ref({});
+const file = ref<{ name?: string }>({});
 
 const updateFile = (newFile: any) => {
   file.value = newFile;
