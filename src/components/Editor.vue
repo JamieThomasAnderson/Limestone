@@ -3,6 +3,7 @@
   <MdEditor
     class="editor"
     v-model="content"
+    :toolbar="[]"
     language="en-US"
     @on-save="saveFile"
   />
@@ -51,14 +52,13 @@ const loadFile = async (file) => {
 };
 
 const saveFile = async () => {
-  console.log('saving file');
   if (!store.openFile) {
     await saveNewFile();
     console.log("New file saved successfully");
     return;
   }
 
-  const fileData = await currFile.value.handle.getFile();
+  const fileData = await store.openFile.handle.getFile();
   const fileContent = await fileData.text();
 
   if (content.value === fileContent) {
@@ -66,7 +66,7 @@ const saveFile = async () => {
     return;
   }
 
-  const writable = await currFile.value.handle.createWritable();
+  const writable = await store.openFile.handle.createWritable();
   await writable.write(content.value);
   await writable.close();
 
@@ -91,7 +91,7 @@ const saveNewFile = async () => {
     await writable.close();
 
     console.log("New file saved successfully");
-    currFile.value = { handle }; // Update the current file reference with the new handle
+    currFile.value = { handle };
   } catch (error) {
     console.error("Error saving new file:", error);
   }
