@@ -1,20 +1,26 @@
-# Vue 3 + TypeScript + Vite
+# Limestone
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Local-first Knowledge Management System
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
-
-### Features
+# To Do
 - [ ] Fix Types
-#### Saving / Directory
-- [x] Save New Files
-- [x] Startup new File
-- [ ] Refresh on New File
-- [ ] Set a Default New File Directory
-- [ ] Create new file from Command
 
-#### Navigation
-- [ ] Create Directory Item Component
-- [ ] Show Current Open File Name at Top
-- [ ] Open Multiple Files
-- [ ] Tab Menu w/ Multiple Files
+### Saving / Directory
+- [x] Save New Files
+    - [ ] Refresh Vault on New File
+- [x] Startup new File
+- [ ] Rename File
+- [ ] Default Directory
+
+### Navigation
+- [x] Recent Menu
+- [ ] Command Menu
+    - [ ] Create New File
+- [ ] Shrink / Expand Side Panel
+
+### Markdown 
+- [ ] Live Editor / Preview
+- [ ] Wikilinks
+- [ ] Plugins
+    - [ ] Templater
+    - [ ] Omnisearch

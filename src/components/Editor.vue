@@ -2,7 +2,6 @@
 <template>
   <MdEditor
     class="editor"
-    :toolbars="[]"
     v-model="content"
     language="en-US"
     @on-save="saveFile"
@@ -11,6 +10,8 @@
 
 <script setup>
 import { ref, watch } from "vue";
+import { store } from "@/store";
+
 import { MdEditor, config } from "md-editor-v3";
 import { lineNumbers } from "@codemirror/view";
 import "md-editor-v3/lib/style.css";
@@ -24,22 +25,13 @@ config({
   },
 });
 
-const props = defineProps({
-  file: {
-    type: Object,
-    required: true,
-  },
-});
-
 const content = ref('');
-const currFile = ref(props.file);
 const emit = defineEmits(["contentChanged"]);
 
 
 watch(
-  () => props.file,
+  () => store.openFile,
   (newFile) => {
-    currFile.value = newFile;
     loadFile(newFile);
   }
 );
@@ -59,7 +51,8 @@ const loadFile = async (file) => {
 };
 
 const saveFile = async () => {
-  if (!currFile.value.handle) {
+  console.log('saving file');
+  if (!store.openFile) {
     await saveNewFile();
     console.log("New file saved successfully");
     return;

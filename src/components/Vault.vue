@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4">
-    <button class="font-semibold" @click="selectDirectory">
+  <div class="overflow-x-hidden">
+    <button class="font-semibold pl-2 pt-4 pb-2" @click="selectDirectory">
       {{ directoryName || "Select Vault" }}
     </button>
     <DirectoryTree
@@ -16,7 +16,6 @@ import { ref, onMounted } from "vue";
 import { store } from "@/store";
 
 import DirectoryTree from "./DirectoryTree.vue";
-
 
 const directoryStructure = ref([]);
 const directoryName = ref("");
@@ -50,8 +49,10 @@ const buildDirectoryTree = async (directoryHandle, parentArray) => {
 };
 
 const handleLoad = (file) => {
-  store.appendOpenFile(file);
-  emit("load", file);
+  if (file.kind === "file") {
+    store.appendRecentFile(file);
+    store.setOpenFile(file);
+  }
 };
 
 </script>

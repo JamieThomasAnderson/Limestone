@@ -1,20 +1,14 @@
 import { reactive } from "vue";
 
 export const store = reactive({
-  openFiles: [] as any[],
-  openDirectory: "",
-  defaultSaveDirectory: "",
-  setOpenFiles(files: any) {
-    this.openFiles = files;
-  },
-  appendOpenFile(file: any) {
-    this.openFiles.push(file);
-  },
-  setOpenDirectory(directory: any) {
-    this.openDirectory = directory;
+  openFile: null as File | null,
+  recentFile: [] as File[],
+  
+  appendRecentFile(file: File) {
+    this.recentFile.push(file);
   },
 
-  setDefaultSaveDirectory(directory: any) {
-    this.defaultSaveDirectory = directory;
+  setOpenFile(file: File) {
+    this.openFile = file;
   }
 });

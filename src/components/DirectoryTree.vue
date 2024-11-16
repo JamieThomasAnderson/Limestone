@@ -1,42 +1,65 @@
 <template>
   <ul>
-    <li v-for="(item, index) in items" :key="index">
+    <li
+      v-for="(item, index) in items"
+      :key="index"
+      class="text-sm"
+    >
       <div @click="toggle(item)">
-        <button v-if="item.kind === 'directory'">
-          {{ item.name }} ({{ item.isOpen ? '-' : '+' }})
+        <button
+          class="hover:bg-neutral-300 w-full text-left text-nowrap"
+          v-if="item.kind === 'directory'"
+          :style="{ paddingLeft: `${level * 10}px` }"
+        >
+          {{ item.name }} ({{ item.isOpen ? "-" : "+" }})
         </button>
-        <span
+        <button
           v-else
-          :style="{ cursor: item.kind === 'file' ? 'pointer' : 'default' }"
+          :style="{ cursor: item.kind === 'file' ? 'pointer' : 'default', paddingLeft: `${level * 10}px` }"
           @click.stop="emitClick(item)"
+          class="hover:bg-neutral-300 w-full text-left text-nowrap"
         >
           {{ item.name }}
-        </span>
+        </button>
       </div>
-      <DirectoryTree v-if="item.isOpen && item.children" :items="item.children" @click="emitClick" />
+      <DirectoryTree
+        v-if="item.isOpen && item.children"
+        :items="item.children"
+        :level="level + 1"
+        @click="emitClick"
+      />
     </li>
   </ul>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
+<script>
+export default {
+  name: "DirectoryTree",
+  props: {
+    items: {
+      type: Array,
+      required: true,
+    },
+    level: {
+      type: Number,
+      default: 1,
+    },
   },
-});
-
-const emit = defineEmits(['click']);
-
-const toggle = (item) => {
-  if (item.kind === 'directory') {
-    item.isOpen = !item.isOpen;
-  }
-};
-
-const emitClick = (item) => {
-  emit('click', item);
+  methods: {
+    toggle(item) {
+      item.isOpen = !item.isOpen;
+    },
+    emitClick(item) {
+      this.$emit("click", item);
+    },
+  },
 };
 </script>
+
+<style scoped>
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
