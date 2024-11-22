@@ -3,19 +3,27 @@
 Local-first Knowledge Management System
 
 # To Do
-- [ ] Fix Types
+- [ ] Audit Types
 
 ### Saving / Directory
+- [x] Refresh Directory
+    - [ ] w/ Command
+
 - [x] Save New Files
-    - [ ] Refresh Vault on New File
 - [x] Startup new File
-- [ ] Rename File
-- [ ] Default Directory
+- [ ] Context Menu
+    - [ ] Rename File
+    - [ ] Delete File
+
+- [ ] Deafult Open Directory
+- [ ] Default Save Directory
 
 ### Navigation
 - [x] Recent Menu
 - [ ] Command Menu
-    - [ ] Create New File
+    - [x] Create New File
+    - [ ] Editor Config
+    - [ ] Misc Opts.
 - [ ] Shrink / Expand Side Panel
 
 ### Markdown 

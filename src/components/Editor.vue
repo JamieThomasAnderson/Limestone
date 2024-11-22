@@ -3,7 +3,7 @@
   <MdEditor
     class="editor"
     v-model="content"
-    :toolbar="[]"
+    :toolbars="[]"
     language="en-US"
     @on-save="saveFile"
   />
@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { store } from "@/store";
+import { store, refreshVault } from "@/store";
 
 import { MdEditor, config } from "md-editor-v3";
 import { lineNumbers } from "@codemirror/view";
@@ -27,17 +27,23 @@ config({
 });
 
 const content = ref('');
-const emit = defineEmits(["contentChanged"]);
 
 
 watch(
   () => store.openFile,
   (newFile) => {
+    console.log("Loading changed:", newFile);
     loadFile(newFile);
   }
 );
 
 const loadFile = async (file) => {
+
+  if (!file) {
+    content.value = "";
+    return;
+  }
+
   if (file.kind === "file" && file.handle) {
     try {
       const fileData = await file.handle.getFile();
@@ -54,6 +60,9 @@ const loadFile = async (file) => {
 const saveFile = async () => {
   if (!store.openFile) {
     await saveNewFile();
+    if (store.handler) {
+      refreshVault(store.handler);
+    }
     console.log("New file saved successfully");
     return;
   }
@@ -90,8 +99,11 @@ const saveNewFile = async () => {
     await writable.write(content.value);
     await writable.close();
 
-    console.log("New file saved successfully");
-    currFile.value = { handle };
+    console.log("New file saved successfully", handle);
+    
+    store.appendRecentFile(handle);
+    store.setOpenFile({ kind: "file", handle, name: handle.name });
+
   } catch (error) {
     console.error("Error saving new file:", error);
   }
@@ -101,6 +113,8 @@ const saveNewFile = async () => {
 <style scoped>
 .editor {
   height: 93vh;
-  border: none;
+  border-bottom: none;
+  border-left: none;
+  border-top: 1px solid #e2e8f0;
 }
 </style>

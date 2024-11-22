@@ -1,7 +1,8 @@
 <template>
   <div class="app">
+    <Context />
     <div
-      v-if="isCommandVisible"
+      v-if="store.isCommandVisible"
       class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-start justify-center z-50"
     >
       <div class="bg-white rounded shadow-lg w-1/2 mt-16">
@@ -16,17 +17,17 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import Layout from "./components/Layout.vue";
 import Command from "./components/Command.vue";
-
-const isCommandVisible = ref(false);
+import Context from "./components/Context.vue";
+import { store } from "./store";
 
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.ctrlKey && event.key.toLowerCase() === "p") {
     event.preventDefault();
-    isCommandVisible.value = !isCommandVisible.value;
+    store.toggleCommandVisibility();
   }
 
   if (event.keyCode === 27) {
-    isCommandVisible.value = false;
+    store.isCommandVisible = false;
   }
 };
 
